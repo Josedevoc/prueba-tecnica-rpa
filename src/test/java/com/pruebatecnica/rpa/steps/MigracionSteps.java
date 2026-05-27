@@ -195,6 +195,55 @@ public class MigracionSteps {
         }
     }
 
+    @Then("VALCAPPAG-IN debe ser igual a VALPRESTA-IN menos VALSLDACT-IN con minimo cero")
+    public void validarCapitalPagado() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+
+        FieldDefinition fdCodLinea = findField(fields, "CODLINCRE-IN");
+        FieldDefinition fdPresta   = findField(fields, "VALPRESTA-IN");
+        FieldDefinition fdSaldo    = findField(fields, "VALSLDACT-IN");
+        FieldDefinition fdCapPag   = findField(fields, "VALCAPPAG-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            // CODLINCRE=14 (rotativo): VALCAPPAG siempre 0 por regla rotativa, se excluye
+            String codLinea = extractField(line, fdCodLinea).trim().replaceAll("^0+", "");
+            if ("14".equals(codLinea)) continue;
+
+            long valPresta = Long.parseLong(extractField(line, fdPresta).trim());
+            long valSaldo  = Long.parseLong(extractField(line, fdSaldo).trim());
+            long capPagado = Long.parseLong(extractField(line, fdCapPag).trim());
+            long expected  = Math.max(0, valPresta - valSaldo);
+
+            assertEquals(expected, capPagado,
+                    String.format("Línea %d: VALCAPPAG(%d) != max(0, VALPRESTA(%d) - VALSLDACT(%d))",
+                            i + 1, capPagado, valPresta, valSaldo));
+        }
+    }
+
+    @Then("si CODLINCRE-IN es diferente de {string} entonces NITEMPCON-IN debe ser ceros")
+    public void validarNitEmpCon(String codLineaRef) throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+
+        FieldDefinition fdCodLinea  = findField(fields, "CODLINCRE-IN");
+        FieldDefinition fdNitEmpCon = findField(fields, "NITEMPCON-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String codLinea = extractField(line, fdCodLinea).trim().replaceAll("^0+", "");
+            if (codLinea.isEmpty()) codLinea = "0";
+
+            if (!codLineaRef.equals(codLinea)) {
+                long nitVal = Long.parseLong(extractField(line, fdNitEmpCon).trim());
+                assertEquals(0L, nitVal,
+                        String.format("Línea %d: CODLINCRE=%s (distinto de %s) pero NITEMPCON no es ceros",
+                                i + 1, codLinea, codLineaRef));
+            }
+        }
+    }
+
     @And("el archivo debe contener exactamente {int} lineas")
     public void elArchivoDebeContenerLineas(int expectedLines) throws IOException {
         List<String> lines = Files.readAllLines(outputPath);

@@ -31,6 +31,14 @@ Feature: Generacion de archivo plano de migracion de creditos
     When genero un archivo plano con 10 registros
     Then todos los campos de fecha deben tener formato aaaammdd valido
 
+  Scenario: Validar calculo de capital pagado
+    When genero un archivo plano con 10 registros
+    Then VALCAPPAG-IN debe ser igual a VALPRESTA-IN menos VALSLDACT-IN con minimo cero
+
+  Scenario: Validar regla NITEMPCON condicional por linea de credito
+    When genero un archivo plano con 10 registros
+    Then si CODLINCRE-IN es diferente de "131" entonces NITEMPCON-IN debe ser ceros
+
   Scenario Outline: Generar archivo parametrizado
     When genero un archivo plano con <cantidad> registros
     Then el archivo "salida.txt" debe existir
