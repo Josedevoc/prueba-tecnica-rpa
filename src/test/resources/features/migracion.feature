@@ -21,6 +21,7 @@ Feature: Generacion de archivo plano de migracion de creditos
     When genero un archivo plano con 10 registros
     Then si TIPOTASA-IN es "F" entonces TASDINAM-IN debe ser "X"
     And si TIPOTASA-IN es "F" entonces TIPCUOTA-IN debe ser "F"
+    And si TIPOTASA-IN es "D" entonces TIPCUOTA-IN debe ser "V"
 
   Scenario: Validar saldos calculados
     When genero un archivo plano con 10 registros
