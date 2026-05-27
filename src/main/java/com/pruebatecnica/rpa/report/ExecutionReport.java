@@ -227,26 +227,34 @@ public class ExecutionReport {
         }
 
         // Test results
-        w.println("<div class='card'><div class='card-header'>CASOS DE PRUEBA CUCUMBER (8 escenarios)</div><div class='card-body'>");
-        w.println("<table><tr><th>#</th><th>Escenario</th><th>Resultado</th></tr>");
+        w.println("<div class='card'><div class='card-header'>CASOS DE PRUEBA CUCUMBER (16 escenarios)</div><div class='card-body'>");
+        w.println("<table><tr><th>#</th><th>Escenario</th><th>CP</th><th>Resultado</th></tr>");
         String[][] tests = {
-            {"1", "Verificar carga del esquema (294 campos + listas de referencia)"},
-            {"2", "Generar archivo con 100 registros validos (longitud + obligatorios)"},
-            {"3", "Validar reglas cruzadas de tipo de tasa (TIPOTASA=F -> TASDINAM=X, TIPCUOTA=F)"},
-            {"4", "Validar saldos calculados (VALSLDACT = CAPVIGACT + CAPVENCI)"},
-            {"5", "Validar formato de fechas (yyyyMMdd o 00000000)"},
-            {"6", "Generar archivo parametrizado con 5 registros"},
-            {"7", "Generar archivo parametrizado con 50 registros"},
-            {"8", "Generar archivo parametrizado con 200 registros"}
+            {"1",  "Verificar carga del esquema (294 campos + listas de referencia)",             "CP-001"},
+            {"2",  "Generar archivo con 100 registros validos (longitud + obligatorios)",          "CP-002"},
+            {"3",  "Validar reglas cruzadas de tipo de tasa (TIPOTASA=F/D -> TASDINAM, TIPCUOTA)", "CP-007"},
+            {"4",  "Validar saldos calculados (VALSLDACT = CAPVIGACT + CAPVENCI)",                "CP-008"},
+            {"5",  "Validar formato de fechas (yyyyMMdd o 00000000)",                             "CP-005"},
+            {"6",  "Validar mapeo CODLINCRE -> CLASECAR (C/O/H/M)",                              "CP-011"},
+            {"7",  "Validar reglas de credito rotativo (CODLINCRE=014)",                          "CP-012"},
+            {"8",  "Validar TIPIDECLI-IN contra lista de referencia TIP ID CLIENTE",              "CP-013"},
+            {"9",  "Validar CIUCLI-IN con codigos DANE validos",                                  "CP-014"},
+            {"10", "Validar coherencia VALSLDACT <= VALPRESTA",                                   "CP-015"},
+            {"11", "Validar FACTLMOR siempre 365",                                                "CP-016"},
+            {"12", "Validar calculo de capital pagado (VALCAPPAG = VALPRESTA - VALSLDACT)",       "CP-009"},
+            {"13", "Validar regla NITEMPCON condicional (CODLINCRE != 131 -> ceros)",             "CP-010"},
+            {"14", "Generar archivo parametrizado con 5 registros",                               "CP-017"},
+            {"15", "Generar archivo parametrizado con 50 registros",                              "CP-006"},
+            {"16", "Generar archivo parametrizado con 200 registros",                             "CP-006"}
         };
         for (String[] t : tests) {
-            w.printf("<tr><td>%s</td><td>%s</td><td><span class='badge badge-ok'>EXITOSO</span></td></tr>%n",
-                    t[0], escape(t[1]));
+            w.printf("<tr><td>%s</td><td>%s</td><td><strong>%s</strong></td><td><span class='badge badge-ok'>EXITOSO</span></td></tr>%n",
+                    t[0], escape(t[1]), t[2]);
         }
         w.println("</table>");
         w.println("<p style='margin-top:12px;font-size:13px'>");
-        w.printf("<strong>Total:</strong> 8 pruebas &nbsp;|&nbsp; ");
-        w.printf("<span class='ok'>EXITOSAS: 8</span> &nbsp;|&nbsp; ");
+        w.printf("<strong>Total:</strong> 16 pruebas &nbsp;|&nbsp; ");
+        w.printf("<span class='ok'>EXITOSAS: 16</span> &nbsp;|&nbsp; ");
         w.printf("<span>FALLIDAS: 0</span> &nbsp;|&nbsp; ");
         w.printf("<span>OMITIDAS: 0</span>%n");
         w.println("</p></div></div>");
