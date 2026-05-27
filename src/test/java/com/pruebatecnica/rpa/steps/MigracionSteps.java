@@ -195,6 +195,107 @@ public class MigracionSteps {
         }
     }
 
+    @Then("CLASECAR-IN debe contener un valor valido del mapeo de lineas de credito")
+    public void validarClaseCartera() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+        FieldDefinition fd = findField(fields, "CLASECAR-IN");
+        Set<String> validValues = Set.of("C", "O", "H", "M");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String val = extractField(lines.get(i), fd).trim();
+            assertTrue(validValues.contains(val),
+                    String.format("Línea %d: CLASECAR-IN='%s' no es válido (C/O/H/M)", i + 1, val));
+        }
+    }
+
+    @Then("para CODLINCRE-IN igual a {string} los campos rotativos deben cumplir la regla especial")
+    public void validarCreditoRotativo(String codLineaRef) throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+
+        FieldDefinition fdCodLinea  = findField(fields, "CODLINCRE-IN");
+        FieldDefinition fdCapPag    = findField(fields, "VALCAPPAG-IN");
+        FieldDefinition fdNumCuoPag = findField(fields, "NUMCUOPAG-IN");
+        FieldDefinition fdNumCuoApa = findField(fields, "NUMCUOAPA-IN");
+        FieldDefinition fdFecFin    = findField(fields, "FECFINPACT-IN");
+
+        String refStripped = codLineaRef.replaceAll("^0+", "");
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String cod = extractField(line, fdCodLinea).trim().replaceAll("^0+", "");
+            if (!refStripped.equals(cod)) continue;
+
+            assertEquals(0L, Long.parseLong(extractField(line, fdCapPag).trim()),
+                    String.format("Línea %d (rotativo): VALCAPPAG-IN debe ser 0", i + 1));
+            assertEquals(0L, Long.parseLong(extractField(line, fdNumCuoPag).trim()),
+                    String.format("Línea %d (rotativo): NUMCUOPAG-IN debe ser 0", i + 1));
+            assertEquals(0L, Long.parseLong(extractField(line, fdNumCuoApa).trim()),
+                    String.format("Línea %d (rotativo): NUMCUOAPA-IN debe ser 0", i + 1));
+            assertEquals("99991231", extractField(line, fdFecFin).trim(),
+                    String.format("Línea %d (rotativo): FECFINPACT-IN debe ser 99991231", i + 1));
+        }
+    }
+
+    @Then("TIPIDECLI-IN debe pertenecer a la lista de referencia TIP ID CLIENTE")
+    public void validarTipoIdCliente() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+        Set<String> validValues = engine.getReferenceLists().get("TIP ID CLIENTE");
+        FieldDefinition fd = findField(fields, "TIPIDECLI-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String val = extractField(lines.get(i), fd).trim();
+            assertTrue(validValues.contains(val),
+                    String.format("Línea %d: TIPIDECLI-IN='%s' no pertenece a la lista TIP ID CLIENTE", i + 1, val));
+        }
+    }
+
+    @Then("CIUCLI-IN debe contener un codigo DANE valido de la lista de referencia")
+    public void validarCiuCliDane() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+        Set<String> daneList = engine.getReferenceLists().get("DANE");
+        FieldDefinition fd = findField(fields, "CIUCLI-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String raw = extractField(lines.get(i), fd).trim();
+            String stripped = raw.replaceAll("^0+", "");
+            if (stripped.isEmpty()) stripped = "0";
+            assertTrue(daneList.contains(raw) || daneList.contains(stripped),
+                    String.format("Línea %d: CIUCLI-IN='%s' no existe en la lista DANE", i + 1, raw));
+        }
+    }
+
+    @Then("VALSLDACT-IN debe ser menor o igual a VALPRESTA-IN en todos los registros")
+    public void validarValsldactMenorIgualValpresta() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+        FieldDefinition fdPresta = findField(fields, "VALPRESTA-IN");
+        FieldDefinition fdSaldo  = findField(fields, "VALSLDACT-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            long valPresta = Long.parseLong(extractField(line, fdPresta).trim());
+            long valSaldo  = Long.parseLong(extractField(line, fdSaldo).trim());
+            assertTrue(valSaldo <= valPresta,
+                    String.format("Línea %d: VALSLDACT(%d) > VALPRESTA(%d)", i + 1, valSaldo, valPresta));
+        }
+    }
+
+    @Then("FACTLMOR-IN debe ser siempre 365 en todos los registros")
+    public void validarFactorMora() throws IOException {
+        List<String> lines = Files.readAllLines(outputPath);
+        List<FieldDefinition> fields = engine.getFields();
+        FieldDefinition fd = findField(fields, "FACTLMOR-IN");
+
+        for (int i = 0; i < lines.size(); i++) {
+            long val = Long.parseLong(extractField(lines.get(i), fd).trim());
+            assertEquals(365L, val,
+                    String.format("Línea %d: FACTLMOR-IN=%d, se esperaba 365", i + 1, val));
+        }
+    }
+
     @Then("VALCAPPAG-IN debe ser igual a VALPRESTA-IN menos VALSLDACT-IN con minimo cero")
     public void validarCapitalPagado() throws IOException {
         List<String> lines = Files.readAllLines(outputPath);

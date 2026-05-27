@@ -31,6 +31,30 @@ Feature: Generacion de archivo plano de migracion de creditos
     When genero un archivo plano con 10 registros
     Then todos los campos de fecha deben tener formato aaaammdd valido
 
+  Scenario: Validar mapeo CODLINCRE a CLASECAR
+    When genero un archivo plano con 10 registros
+    Then CLASECAR-IN debe contener un valor valido del mapeo de lineas de credito
+
+  Scenario: Validar reglas de credito rotativo
+    When genero un archivo plano con 50 registros
+    Then para CODLINCRE-IN igual a "014" los campos rotativos deben cumplir la regla especial
+
+  Scenario: Validar TIPIDECLI-IN contra lista de referencia
+    When genero un archivo plano con 50 registros
+    Then TIPIDECLI-IN debe pertenecer a la lista de referencia TIP ID CLIENTE
+
+  Scenario: Validar CIUCLI-IN con codigos DANE
+    When genero un archivo plano con 50 registros
+    Then CIUCLI-IN debe contener un codigo DANE valido de la lista de referencia
+
+  Scenario: Validar coherencia VALSLDACT menor o igual a VALPRESTA
+    When genero un archivo plano con 100 registros
+    Then VALSLDACT-IN debe ser menor o igual a VALPRESTA-IN en todos los registros
+
+  Scenario: Validar FACTLMOR siempre 365
+    When genero un archivo plano con 10 registros
+    Then FACTLMOR-IN debe ser siempre 365 en todos los registros
+
   Scenario: Validar calculo de capital pagado
     When genero un archivo plano con 10 registros
     Then VALCAPPAG-IN debe ser igual a VALPRESTA-IN menos VALSLDACT-IN con minimo cero
