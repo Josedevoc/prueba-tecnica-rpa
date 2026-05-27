@@ -48,14 +48,14 @@ O desde IntelliJ: clic derecho en `Main.java` → **Run 'Main'**.
 ## Tests
 
 ```bash
-# Ejecutar tests (genera reporte HTML profesional automaticamente)
+# Ejecutar tests
 & "...mvn.cmd" verify
 
 # Solo tests sin reporte
 & "...mvn.cmd" test
 ```
 
-Se ejecutan **8 escenarios BDD** con Cucumber en espanol. Al finalizar, `mvn verify` genera automaticamente el reporte HTML profesional en:
+Se ejecutan **16 escenarios BDD** con Cucumber (keywords en ingles, contenido en espanol). Al finalizar, `mvn verify` genera automaticamente el reporte HTML profesional en:
 
 ```
 target/cucumber-html-reports/overview-features.html
@@ -63,16 +63,24 @@ target/cucumber-html-reports/overview-features.html
 
 ### Escenarios de prueba
 
-| # | Escenario | Que valida |
-|---|-----------|------------|
-| 1 | Verificar carga del esquema | 294 campos cargados + 15 listas de referencia presentes |
-| 2 | Generar archivo con 100 registros validos | Longitud fija 2094 chars + campos obligatorios con datos |
-| 3 | Validar reglas cruzadas de tipo de tasa | TIPOTASA=F implica TASDINAM=X y TIPCUOTA=F |
-| 4 | Validar saldos calculados | VALSLDACT = CAPVIGACT + CAPVENCI |
-| 5 | Validar formato de fechas | Todos los campos FEC* tienen formato yyyyMMdd valido |
-| 6 | Generar archivo parametrizado (5 registros) | Cantidad exacta de lineas en el archivo |
-| 7 | Generar archivo parametrizado (50 registros) | Cantidad exacta de lineas en el archivo |
-| 8 | Generar archivo parametrizado (200 registros) | Cantidad exacta de lineas en el archivo |
+| # | Escenario | CP | Que valida |
+|---|-----------|-----|------------|
+| 1 | Verificar carga del esquema | CP-001 | 294 campos cargados + 15 listas de referencia presentes |
+| 2 | Generar archivo con 100 registros validos | CP-002 | Longitud fija 2094 chars + campos obligatorios con datos |
+| 3 | Validar reglas cruzadas de tipo de tasa | CP-007 | TIPOTASA=F → TASDINAM=X y TIPCUOTA=F; TIPOTASA=D → TIPCUOTA=V |
+| 4 | Validar saldos calculados | CP-008 | VALSLDACT = CAPVIGACT + CAPVENCI |
+| 5 | Validar formato de fechas | CP-005 | Todos los campos FEC* tienen formato yyyyMMdd valido |
+| 6 | Validar mapeo CODLINCRE a CLASECAR | CP-011 | CLASECAR-IN es C, O, H o M segun la hoja Lineas |
+| 7 | Validar reglas de credito rotativo | CP-012 | CODLINCRE=014 → VALCAPPAG/NUMCUOPAG/NUMCUOAPA=0, FECFINPACT=99991231 |
+| 8 | Validar TIPIDECLI-IN contra lista de referencia | CP-013 | Solo valores validos de la lista TIP ID CLIENTE (C,E,I,J,L,P,R,T) |
+| 9 | Validar CIUCLI-IN con codigos DANE | CP-014 | Codigo DANE valido de la hoja CodigoDANE |
+| 10 | Validar coherencia VALSLDACT <= VALPRESTA | CP-015 | Saldo actual nunca supera el valor del prestamo |
+| 11 | Validar FACTLMOR siempre 365 | CP-016 | FACTLMOR-IN = 365 en todos los registros |
+| 12 | Validar calculo de capital pagado | CP-009 | VALCAPPAG = max(0, VALPRESTA - VALSLDACT) |
+| 13 | Validar regla NITEMPCON condicional | CP-010 | CODLINCRE != 131 → NITEMPCON = ceros |
+| 14 | Generar archivo parametrizado (5 registros) | CP-017 | Cantidad exacta de lineas en el archivo |
+| 15 | Generar archivo parametrizado (50 registros) | CP-018 | Cantidad exacta de lineas en el archivo |
+| 16 | Generar archivo parametrizado (200 registros) | CP-019 | Cantidad exacta de lineas en el archivo |
 
 ### Reportes de tests generados
 
