@@ -91,7 +91,7 @@ target/cucumber-html-reports/overview-features.html
 | `target/cucumber-report.html`                    | HTML      | Reporte basico de Cucumber               |
 | `target/cucumber-report.json`                    | JSON      | Resultados en formato estandar           |
 | `target/cucumber-report-junit.xml`               | XML       | Resultados compatibles con CI/CD         |
-| `target/surefire-reports/*.txt`                  | TXT       | Resumen: Tests run: 8, Failures: 0       |
+| `target/surefire-reports/*.txt`                  | TXT       | Resumen: Tests run: 16, Failures: 0      |
 
 ## Arquitectura
 
@@ -120,9 +120,9 @@ src/test/
 ├── java/com/pruebatecnica/rpa/
 │   ├── CucumberRunnerTest.java    # Runner de Cucumber + JUnit Platform Suite
 │   └── steps/
-│       └── MigracionSteps.java    # Step definitions en espanol (Dado/Cuando/Entonces)
+│       └── MigracionSteps.java    # Step definitions en espanol (Given/When/Then)
 └── resources/features/
-    └── migracion.feature          # 8 escenarios Gherkin en espanol
+    └── migracion.feature          # 16 escenarios Gherkin (keywords ingles, contenido espanol)
 ```
 
 ## Como funciona
