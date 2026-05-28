@@ -242,5 +242,5 @@ El archivo `DetalleTecnico.xlsx` contiene 7 hojas:
 ## Documentacion adicional
 
 - `Plan_de_Pruebas_RPA_Migracion.docx` — Plan de pruebas con historias de usuario, criterios de aceptacion y casos de prueba
-- `target/cucumber-html-reports/overview-features.html` — Reporte visual de los 8 tests (se genera con `mvn verify`)
+- `target/cucumber-html-reports/overview-features.html` — Reporte visual de los 16 tests (se genera con `mvn verify`)
 - `execution-report.html` — Evidencia de ejecucion con campos clave del archivo generado (se genera al ejecutar el JAR)
