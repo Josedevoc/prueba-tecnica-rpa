@@ -1,4 +1,4 @@
-# Generador de Archivo Plano - Migracion RPA de Creditos
+# Generador de Archivo Plano - RPA
 
 Automatizacion en Java que lee un archivo Excel (`DetalleTecnico.xlsx`) con la estructura de 294 campos de creditos bancarios y genera un archivo plano `.txt` de ancho fijo (2094 chars/registro), aplicando todas las reglas de negocio, tipos de campo, longitudes, listas de referencia y 22 validaciones cruzadas definidas en el Excel.
 
