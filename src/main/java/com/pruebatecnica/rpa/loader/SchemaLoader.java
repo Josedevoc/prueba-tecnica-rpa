@@ -24,8 +24,14 @@ public class SchemaLoader {
         }
     }
 
-    private void loadFieldDefinitions(Workbook workbook) {
+    private void loadFieldDefinitions(Workbook workbook) throws IOException {
         Sheet sheet = findSheet(workbook, "DetalleTécnico", "DetalleTecnico");
+        if (sheet == null) {
+            throw new IOException(
+                "No se encontro la hoja 'DetalleTecnico' en el archivo Excel. " +
+                "Verifique que el archivo sea DetalleTecnico.xlsx correcto."
+            );
+        }
         fields = new ArrayList<>();
 
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
